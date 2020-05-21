@@ -16,6 +16,7 @@ pub struct Endpoint {
 pub struct Peer {
     pub(crate) tunnel: Box<Tunn>, // The associated tunnel struct
     index: u32,                   // The index the tunnel uses
+    enable_tcp_fallback: bool,
     endpoint: spin::RwLock<Endpoint>,
     allowed_ips: AllowedIps<()>,
     preshared_key: Option<[u8; 32]>,
@@ -49,6 +50,7 @@ impl Peer {
     pub fn new(
         tunnel: Box<Tunn>,
         index: u32,
+        enable_tcp_fallback: bool,
         endpoint: Option<SocketAddr>,
         allowed_ips: &[AllowedIP],
         preshared_key: Option<[u8; 32]>,
@@ -56,6 +58,7 @@ impl Peer {
         Peer {
             tunnel,
             index,
+            enable_tcp_fallback,
             endpoint: spin::RwLock::new(Endpoint {
                 addr: endpoint,
                 conn: None,

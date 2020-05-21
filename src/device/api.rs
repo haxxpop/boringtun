@@ -236,6 +236,7 @@ fn api_set_peer(
 
     let mut remove = false;
     let mut replace_ips = false;
+    let mut enable_tcp_fallback = false;
     let mut endpoint = None;
     let mut keepalive = None;
     let mut preshared_key = None;
@@ -248,6 +249,7 @@ fn api_set_peer(
                 pub_key,
                 remove,
                 replace_ips,
+                enable_tcp_fallback,
                 endpoint,
                 allowed_ips,
                 keepalive,
@@ -267,6 +269,11 @@ fn api_set_peer(
                 "remove" => match val.parse::<bool>() {
                     Ok(true) => remove = true,
                     Ok(false) => remove = false,
+                    Err(_) => return EINVAL,
+                },
+                "enable_tcp_fallback" => match val.parse::<bool>() {
+                    Ok(true) => enable_tcp_fallback = true,
+                    Ok(false) => enable_tcp_fallback = false,
                     Err(_) => return EINVAL,
                 },
                 "preshared_key" => match val.parse::<X25519PublicKey>() {
@@ -296,6 +303,7 @@ fn api_set_peer(
                         pub_key,
                         remove,
                         replace_ips,
+                        enable_tcp_fallback,
                         endpoint,
                         allowed_ips,
                         keepalive,

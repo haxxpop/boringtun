@@ -275,6 +275,7 @@ impl Device {
         pub_key: X25519PublicKey,
         remove: bool,
         _replace_ips: bool,
+        enable_tcp_fallback: bool,
         endpoint: Option<SocketAddr>,
         allowed_ips: Vec<AllowedIP>,
         keepalive: Option<u16>,
@@ -318,7 +319,7 @@ impl Device {
             );
         }
 
-        let peer = Peer::new(tunn, next_index, endpoint, &allowed_ips, preshared_key);
+        let peer = Peer::new(tunn, next_index, enable_tcp_fallback, endpoint, &allowed_ips, preshared_key);
 
         let peer = Arc::new(peer);
         self.peers.insert(pub_key, Arc::clone(&peer));
