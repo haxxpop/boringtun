@@ -137,6 +137,8 @@ pub struct Device {
     mtu: AtomicUsize,
 
     rate_limiter: Option<Arc<RateLimiter>>,
+
+    allow_tcp: bool, // Specifies if we allow incoming TCP connections or not
 }
 
 struct ThreadData {
@@ -357,6 +359,7 @@ impl Device {
             cleanup_paths: Default::default(),
             mtu: AtomicUsize::new(mtu),
             rate_limiter: None,
+            allow_tcp: false,
         };
 
         device.register_api_handler()?;
@@ -482,6 +485,10 @@ impl Device {
         }
 
         Ok(())
+    }
+
+    fn set_allow_tcp(&mut self, val: bool) {
+        self.allow_tcp = val;
     }
 
     fn clear_peers(&mut self) {

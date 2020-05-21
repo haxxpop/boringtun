@@ -202,6 +202,10 @@ fn api_set(reader: &mut BufReader<&UnixStream>, d: &mut LockReadGuard<Device>) -
                     },
                     Err(_) => return EINVAL,
                 },
+                "allow_tcp" => match val.parse::<bool>() {
+                    Ok(val) => device.set_allow_tcp(val),
+                    Err(_) => return EINVAL,
+                },
                 "fwmark" => match val.parse::<u32>() {
                     Ok(mark) => match device.set_fwmark(mark) {
                         Ok(()) => {}
