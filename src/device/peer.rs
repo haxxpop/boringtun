@@ -7,8 +7,20 @@ use std::net::IpAddr;
 use std::net::SocketAddr;
 use std::str::FromStr;
 
+#[derive(Copy, Clone, Debug)]
+pub enum EndpointState {
+    TCP_PERSIST, // Send the outgoing packets using TCP. Establish a new connection if there is not an existing one.
+    TCP_TEMP,    // Send the outgoing packets using TCP only if there is an existing connection
+    UDP,         // Send the outgoing packets using UDP
+}
+
+impl Default for EndpointState {
+    fn default() -> Self { EndpointState::UDP }
+}
+
 #[derive(Default, Debug)]
 pub struct Endpoint {
+    pub state: EndpointState,
     pub addr: Option<SocketAddr>,
     pub conn: Option<Arc<UDPSocket>>,
 }
@@ -60,6 +72,7 @@ impl Peer {
             index,
             enable_tcp_fallback,
             endpoint: spin::RwLock::new(Endpoint {
+                state: EndpointState::UDP,
                 addr: endpoint,
                 conn: None,
             }),
@@ -92,6 +105,7 @@ impl Peer {
             }
 
             *endpoint = Endpoint {
+                state: endpoint.state, // Keep the state when the endpoint is changed
                 addr: Some(addr),
                 conn: None,
             }
